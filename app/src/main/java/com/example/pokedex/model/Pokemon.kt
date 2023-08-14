@@ -8,9 +8,9 @@ data class Pokemon(
     val weight: Int,
     val order: Int,
     val id: Int,
-    val sprites: Sprites
+    val sprites: Sprites,
+    val types: List<TypeItem>
 )
-
 
 data class Sprites(
     @SerializedName("front_default")

@@ -15,9 +15,8 @@ class PokemonViewModel : ViewModel() {
     private val _pokemonList = MutableLiveData<List<Pokemon>>()
     val pokemonList: LiveData<List<Pokemon>> = _pokemonList
 
-    private var limit = 5
+    private var limit = 10
     private var offset = 0
-
 
     init {
         getPokemonList()

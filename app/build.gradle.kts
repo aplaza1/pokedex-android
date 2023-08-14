@@ -67,7 +67,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("com.squareup.retrofit2:retrofit:2.6.0")
+    implementation("com.squareup.retrofit2:retrofit:2.6.4")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.squareup.retrofit2:converter-gson:2.6.0")
     implementation("io.coil-kt:coil-compose:2.4.0")

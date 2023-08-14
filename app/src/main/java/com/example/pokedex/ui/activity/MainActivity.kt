@@ -3,10 +3,13 @@ package com.example.pokedex.ui.activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,13 +29,18 @@ import com.example.pokedex.ui.theme.PokedexTheme
 import com.example.pokedex.viewmodel.PokemonViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.text.toUpperCase
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.pokedex.model.Pokemon
-import java.util.Locale
+import com.example.pokedex.model.TypeItem
+import com.example.pokedex.ui.theme.getTypeColor
 
 class MainActivity : ComponentActivity() {
 
@@ -77,33 +84,97 @@ class MainActivity : ComponentActivity() {
         Card(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .padding(7.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent,
+            ),
 
         ) {
             Row(
-                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color.White, getTypeColor(pokemon.types[0].type.name)),
+                            start = Offset(0f, 0f),
+                            end = Offset(0f, 1000f)
+                        )
+                    )
+                    .padding(end = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ){
                 PokemonImage(pokemon = pokemon)
                 Text(
                     modifier = Modifier.padding(10.dp),
-                    text = pokemon.name.replaceFirstChar { it.titlecase() },
-                    )
+                    style = TextStyle(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                    ),
+                    text = "#${String.format("%04d", pokemon.id)}   ${pokemon.name.replaceFirstChar { it.titlecase() }}",
+                )
+                Types(pokemon.types)
             }
         }
     }
 
     @Composable
-    fun PokemonImage(pokemon: Pokemon){
-        AsyncImage(
+    fun Types(types: List<TypeItem>){
+        Column(
             modifier = Modifier
-                .height(100.dp)
-                .width(100.dp)
-                .padding(2.dp),
-            model = pokemon.sprites.frontDefault,
-            contentDescription = pokemon.name
-        )
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.End
+
+        ) {
+            for(type in types){
+                Type(type = type.type.name)
+            }
+        }
     }
+
+    @Composable
+    fun Type(type: String){
+        Card (
+            modifier = Modifier
+                .width(65.dp)
+                .padding(bottom = 5.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = getTypeColor(type),
+            )
+        ){
+            Box (
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    modifier = Modifier
+                        .padding(5.dp),
+                    style = TextStyle(
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        shadow = Shadow(
+                            color = Color.Black,
+                            blurRadius = 5f,
+                            offset = Offset(2f, 2f)
+                        )
+                    ),
+                    text = type.uppercase()
+                )
+            }
+        }
+    }
+
+
+    @Composable
+    fun PokemonImage(pokemon: Pokemon){
+            AsyncImage(
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(100.dp),
+                model = pokemon.sprites.frontDefault,
+                contentDescription = pokemon.name
+            )
+        }
 }
