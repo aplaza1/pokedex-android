@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -99,15 +100,21 @@ class MainActivity : ComponentActivity() {
                     .fillMaxWidth()
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(Color.White, getTypeColor(pokemon.types[0].type.name)),
+                            colors = listOf(getTypeColor(pokemon.types[0].type.name), Color.White),
                             start = Offset(0f, 0f),
-                            end = Offset(0f, 1000f)
+                            end = Offset(0f, 500f)
                         )
                     )
                     .padding(end = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ){
-                PokemonImage(pokemon = pokemon)
+                PokemonImage(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .width(100.dp),
+                    pokemonName = pokemon.name,
+                    pokemonImageUrl = pokemon.sprites.frontDefault
+                )
                 Text(
                     modifier = Modifier
                         .padding(10.dp)
@@ -118,18 +125,19 @@ class MainActivity : ComponentActivity() {
                     ),
                     text = "#${String.format("%04d", pokemon.id)}   ${pokemon.name.replaceFirstChar { it.titlecase() }}",
                 )
-                Types(pokemon.types)
+                Types(
+                    modifier = Modifier.fillMaxSize(),
+                    types = pokemon.types
+                )
             }
         }
     }
 
     @Composable
-    fun Types(types: List<TypeItem>){
+    fun Types(types: List<TypeItem>, modifier: Modifier = Modifier){
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = modifier,
             horizontalAlignment = Alignment.End
-
         ) {
             for(type in types){
                 Type(type = type.type.name)
@@ -148,7 +156,7 @@ class MainActivity : ComponentActivity() {
             )
         ){
             Box (
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ){
                 Text(
@@ -172,13 +180,100 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun PokemonImage(pokemon: Pokemon){
-            AsyncImage(
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp),
-                model = pokemon.sprites.frontDefault,
-                contentDescription = pokemon.name
+    fun PokemonImage(pokemonName: String, modifier: Modifier, pokemonImageUrl: String){
+        AsyncImage(
+            modifier = modifier,
+            model = pokemonImageUrl,
+            contentDescription = pokemonName
+        )
+    }
+
+    @Preview
+    @Composable
+    fun PokemonPage(pokemon : Pokemon = Pokemon(
+        id = 1,
+        name = "bulbasaur",
+        types = listOf(
+            TypeItem(
+                slot = 1,
+                type = com.example.pokedex.model.Type(
+                    name = "grass",
+                )
+            ),
+            TypeItem(
+                slot = 2,
+                type = com.example.pokedex.model.Type(
+                    name = "poison",
+                )
             )
+        ),
+        height = 2,
+        weight = 100,
+        order = 2,
+        sprites = com.example.pokedex.model.Sprites(
+            frontDefault = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+            other = com.example.pokedex.model.Other(
+                officialArtwork = com.example.pokedex.model.OfficialArtwork(
+                    frontDefault = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+                )
+            )
+        )
+    )){
+        Column (
+            modifier = Modifier
+                .fillMaxSize()
+        ){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(getTypeColor(pokemon.types[0].type.name), MaterialTheme.colorScheme.background),
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, 600f)
+                    ),
+                ),
+                contentAlignment = Alignment.Center
+            ){
+                Column {
+                    Text(
+                        modifier = Modifier
+                            .padding(20.dp, 10.dp, 0.dp, 0.dp)
+                            .fillMaxWidth(),
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 35.sp,
+                            color = MaterialTheme.colorScheme.background,
+                            shadow = Shadow(
+                                color = Color.Black,
+                                blurRadius = 1f,
+                                offset = Offset(1f, 1f)
+                            )
+                        ),
+                        text = pokemon.name.replaceFirstChar { it.titlecase() }
+                    )
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                    ){
+                        PokemonImage(
+                            pokemonName = pokemon.name,
+                            pokemonImageUrl = pokemon.sprites.other.officialArtwork.frontDefault,
+                            modifier = Modifier
+                                .height(200.dp)
+                                .width(200.dp)
+                                .padding(10.dp)
+                        )
+                        Types(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .align(Alignment.CenterVertically),
+                            types = pokemon.types
+                        )
+                    }
+                }
+            }
         }
+    }
+
 }

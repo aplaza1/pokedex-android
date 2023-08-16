@@ -14,5 +14,16 @@ data class Pokemon(
 
 data class Sprites(
     @SerializedName("front_default")
+    val frontDefault: String,
+    val other: Other
+)
+
+data class Other(
+    @SerializedName("official-artwork")
+    val officialArtwork: OfficialArtwork
+)
+
+data class OfficialArtwork(
+    @SerializedName("front_default")
     val frontDefault: String
 )
