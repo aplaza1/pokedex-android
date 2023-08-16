@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,6 +46,7 @@ import coil.compose.AsyncImage
 import com.example.pokedex.model.Pokemon
 import com.example.pokedex.model.TypeItem
 import com.example.pokedex.ui.theme.getTypeColor
+import com.example.pokedex.utils.UnitsConversion
 
 class MainActivity : ComponentActivity() {
 
@@ -188,6 +191,104 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    @Composable
+    fun PokemonDetailsCard(pokemon: Pokemon){
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        getTypeColor(pokemon.types[0].type.name),
+                        MaterialTheme.colorScheme.background
+                    ),
+                    start = Offset(0f, 0f),
+                    end = Offset(0f, 700f)
+                ),
+            ),
+            contentAlignment = Alignment.Center
+        ){
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp, 10.dp, 10.dp, 0.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    PokemonDetailsTitle(text = pokemon.name.replaceFirstChar { it.titlecase() })
+                    PokemonDetailsTitle("#${String.format("%04d", pokemon.id)}")
+                }
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 30.dp, 0.dp, 0.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ){
+                    PokemonImage(
+                        pokemonName = pokemon.name,
+                        pokemonImageUrl = pokemon.sprites.other.officialArtwork.frontDefault,
+                        modifier = Modifier
+                            .height(200.dp)
+                            .width(200.dp)
+                            .padding(10.dp)
+                    )
+                    Types(
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .align(Alignment.CenterVertically),
+                        types = pokemon.types
+                    )
+                }
+            }
+        }
+
+    }
+
+    @Composable
+    private fun PokemonDetailsTitle(text: String) {
+        Text(
+            modifier = Modifier,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 35.sp,
+                color = MaterialTheme.colorScheme.background,
+                shadow = Shadow(
+                    color = Color.Black,
+                    blurRadius = 3f,
+                    offset = Offset(2f, 2f)
+                )
+            ),
+            text = text
+        )
+    }
+
+    @Composable
+    fun PokemonSpecRow(key : String, value: String){
+        Column (modifier = Modifier.padding(30.dp)){
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SpecText(text = key)
+                SpecText(text = value)
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+            Divider(color = Color.Gray)
+        }
+
+    }
+
+    @Composable
+    fun SpecText(text: String){
+        Text(
+            style = TextStyle(
+                fontSize = 18.sp,
+
+            ),
+            text = text
+        )
+    }
+
     @Preview
     @Composable
     fun PokemonPage(pokemon : Pokemon = Pokemon(
@@ -223,56 +324,10 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxSize()
         ){
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(getTypeColor(pokemon.types[0].type.name), MaterialTheme.colorScheme.background),
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, 600f)
-                    ),
-                ),
-                contentAlignment = Alignment.Center
-            ){
-                Column {
-                    Text(
-                        modifier = Modifier
-                            .padding(20.dp, 10.dp, 0.dp, 0.dp)
-                            .fillMaxWidth(),
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 35.sp,
-                            color = MaterialTheme.colorScheme.background,
-                            shadow = Shadow(
-                                color = Color.Black,
-                                blurRadius = 1f,
-                                offset = Offset(1f, 1f)
-                            )
-                        ),
-                        text = pokemon.name.replaceFirstChar { it.titlecase() }
-                    )
-                    Row (
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                    ){
-                        PokemonImage(
-                            pokemonName = pokemon.name,
-                            pokemonImageUrl = pokemon.sprites.other.officialArtwork.frontDefault,
-                            modifier = Modifier
-                                .height(200.dp)
-                                .width(200.dp)
-                                .padding(10.dp)
-                        )
-                        Types(
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .align(Alignment.CenterVertically),
-                            types = pokemon.types
-                        )
-                    }
-                }
-            }
+            PokemonDetailsCard(pokemon = pokemon)
+            PokemonSpecRow(key = "Height", value = "${String.format("%.2f", UnitsConversion.decimetersToInches(pokemon.height.toDouble()))} \"")
+            PokemonSpecRow(key = "Weight", value = "${String.format("%.2f",UnitsConversion.hectogramsToPounds(pokemon.weight.toDouble()))} lbs")
+            PokemonSpecRow(key = "Order", value = "${pokemon.order}")
         }
     }
 
