@@ -23,7 +23,6 @@ class PokemonViewModel : ViewModel() {
     }
 
     fun getPokemonList() {
-
         viewModelScope.launch {
             val response = repository.getPokemonList(limit, offset)
             val newPokemonList = mutableListOf<Pokemon>()

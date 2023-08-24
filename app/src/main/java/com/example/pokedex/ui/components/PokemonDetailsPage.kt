@@ -23,49 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pokedex.model.OfficialArtwork
-import com.example.pokedex.model.Other
 import com.example.pokedex.model.Pokemon
-import com.example.pokedex.model.Sprites
-import com.example.pokedex.model.TypeItem
 import com.example.pokedex.ui.theme.getTypeColor
 import com.example.pokedex.utils.UnitsConversion
 
-@Preview
 @Composable
-fun PokemonPage(pokemon : Pokemon = Pokemon(
-    id = 1,
-    name = "bulbasaur",
-    types = listOf(
-        TypeItem(
-            slot = 1,
-            type = com.example.pokedex.model.Type(
-                name = "grass",
-            )
-        ),
-        TypeItem(
-            slot = 2,
-            type = com.example.pokedex.model.Type(
-                name = "poison",
-            )
-        )
-    ),
-    height = 2,
-    weight = 100,
-    order = 2,
-    sprites = Sprites(
-        frontDefault = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
-        other = Other(
-            officialArtwork = OfficialArtwork(
-                frontDefault = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-            )
-        )
-    )
-)
-){
+fun PokemonPage(pokemon : Pokemon){
     Column (
         modifier = Modifier
             .fillMaxSize()

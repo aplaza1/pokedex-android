@@ -1,6 +1,7 @@
 package com.example.pokedex.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +27,7 @@ import com.example.pokedex.model.Pokemon
 import com.example.pokedex.ui.theme.getTypeColor
 
 @Composable
-fun PokemonRow(pokemon: Pokemon) {
+fun PokemonRow(pokemon: Pokemon, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +49,8 @@ fun PokemonRow(pokemon: Pokemon) {
                         end = Offset(0f, 500f)
                     )
                 )
-                .padding(end = 10.dp),
+                .padding(end = 10.dp)
+                .clickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically
         ){
             PokemonImage(
